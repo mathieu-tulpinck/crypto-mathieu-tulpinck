@@ -14,7 +14,8 @@
 	<name>crypto-mathieu-tulpinck</name>
 	<description>Project for software security</description>
 	<properties>
-		<java.version>11</java.version>
+		<java.version>8</java.version>
+		<target>8</target>
 	</properties>
 	<dependencies>
 		<dependency>
