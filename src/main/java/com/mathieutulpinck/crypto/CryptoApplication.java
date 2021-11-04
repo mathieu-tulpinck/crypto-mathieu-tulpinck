@@ -20,7 +20,7 @@ import java.util.Base64;
 public class CryptoApplication {
 
     private static final Logger log = LoggerFactory.getLogger(CryptoApplication.class);
-    private static String libraryPath = "C:\\dev\\libsodium\\libsodium-1.0.18-stable-msvc\\libsodium\\x64\\Release\\v142\\dynamic\\libsodium.dll";
+    private static final String libraryPath = "C:\\dev\\libsodium\\libsodium-1.0.18-stable-msvc\\libsodium\\x64\\Release\\v142\\dynamic\\libsodium.dll";
 
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(CryptoApplication.class, args);
