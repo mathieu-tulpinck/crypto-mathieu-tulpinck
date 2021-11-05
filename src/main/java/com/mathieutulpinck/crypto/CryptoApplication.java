@@ -20,6 +20,7 @@ public class CryptoApplication {
 
     private static final Logger log = LoggerFactory.getLogger(CryptoApplication.class);
     private static final String libraryPath = "lib\\libsodium.dll";
+    private static final String baseUrl = "https://79vo67ipp9.execute-api.eu-west-1.amazonaws.com/Prod/decrypt/challenges";
 
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(CryptoApplication.class, args);
@@ -34,11 +35,12 @@ public class CryptoApplication {
     @Bean
     public CommandLineRunner run(RestTemplate restTemplate) throws Exception {
         return args -> {
+            log.info("loading libsodium library...");
             SodiumLibrary.setLibraryPath(libraryPath);
             String version = SodiumLibrary.libsodiumVersionString();
             log.info("libsodium version: " + version);
 
-            ApiResponse apiResponse = restTemplate.postForObject("https://79vo67ipp9.execute-api.eu-west-1.amazonaws.com/Prod/decrypt/challenges", null, ApiResponse.class);
+            ApiResponse apiResponse = restTemplate.postForObject(baseUrl, null, ApiResponse.class);
             log.info(apiResponse.toString());
 
             Challenge challenge = new Challenge(apiResponse);
@@ -53,7 +55,7 @@ public class CryptoApplication {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> request = new HttpEntity<>(json, headers);
-            ResponseEntity<Void> response = restTemplate.exchange("https://79vo67ipp9.execute-api.eu-west-1.amazonaws.com/Prod/decrypt/challenges/" + apiResponse.getKid(), HttpMethod.DELETE, request, Void.class);
+            ResponseEntity<Void> response = restTemplate.exchange(baseUrl + apiResponse.getKid(), HttpMethod.DELETE, request, Void.class);
             if (response.getStatusCode() == HttpStatus.NO_CONTENT) {
                 log.info("The challenge was decrypted correctly.");
             } else {
