@@ -19,8 +19,18 @@ import java.util.Base64;
 public class CryptoApplication {
 
     private static final Logger log = LoggerFactory.getLogger(CryptoApplication.class);
-    private static final String libraryPath = "lib\\libsodium.dll";
-    private static final String baseUrl = "https://79vo67ipp9.execute-api.eu-west-1.amazonaws.com/Prod/decrypt/challenges";
+    private static final String os = System.getProperty("os.name");
+    private static final String libraryPath = selectLibrary(os);
+    public static String selectLibrary(String os) {
+        if(os.contains("Windows")) {
+            return "lib\\libsodium.dll";
+        } else {
+            return "lib/libsodium.23.dylib";
+        }
+    }
+
+    private static final String baseUrl = "https://79vo67ipp9.execute-api.eu-west-1.amazonaws.com/Prod/decrypt/challenges/";
+
 
     public static void main(String[] args) {
         ConfigurableApplicationContext ctx = SpringApplication.run(CryptoApplication.class, args);
@@ -64,7 +74,9 @@ public class CryptoApplication {
         };
     }
 
-    public String decrypt(Challenge challenge) {
+
+
+    private String decrypt(Challenge challenge) {
         byte[] decryptedBytes = new byte[0];
         try {
             decryptedBytes = SodiumLibrary.cryptoSecretBoxOpenEasy(challenge.getCipherText(), challenge.getNonce(), challenge.getKey());
@@ -74,4 +86,6 @@ public class CryptoApplication {
 
         return Base64.getEncoder().encodeToString(decryptedBytes);
     }
+
+
 }
